@@ -4,6 +4,7 @@ import User from "@/models/useer.model";
 import bcrypt from "bcryptjs";
 
 dbConnection();
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -25,5 +26,4 @@ export async function POST(req: NextRequest) {
   } catch (error:any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
 }

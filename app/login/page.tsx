@@ -1,6 +1,9 @@
 "use client";
 import Link from "next/link";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { Toast, toast } from "react-hot-toast";
 
 const LoginPage = () => {
   const [disable, setDisable] = useState(true);
@@ -9,14 +12,26 @@ const LoginPage = () => {
     password: "",
   });
 
+  const router = useRouter();
+
   useEffect(() => {
     if (user.email && user.password) {
       setDisable(false);
-    }else{
-      setDisable(true)
+    } else {
+      setDisable(true);
     }
   }, [user]);
 
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post("/api/users/login", user);
+      console.log(response.data);
+      router.push("/");
+      toast.success(response.data.message);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
   return (
     <div className="flex bg-[#669bbc] min-h-screen justify-center items-center">
       <div className="bg-white p-8 rounded-md shadow-lg shadow-black">
@@ -45,6 +60,7 @@ const LoginPage = () => {
           className={`${
             disable ? "bg-[#e3e3e3] cursor-not-allowed" : "bg-[#ff6984]"
           } w-full py-1 my-2 rounded-md text-white`}
+          onClick={handleSubmit}
         >
           Login
         </button>
