@@ -1,6 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { Toast, toast } from "react-hot-toast";
 
 const SignUp = () => {
   const [disable, setDisable] = useState(true);
@@ -10,6 +13,8 @@ const SignUp = () => {
     password: "",
   });
 
+  const router = useRouter();
+
   useEffect(() => {
     if (user.email && user.password && user.username) {
       setDisable(false);
@@ -17,6 +22,19 @@ const SignUp = () => {
       setDisable(true);
     }
   }, [user]);
+
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post("/api/users/signup", user);
+      router.push("/login");
+      toast.success(response.data.message);
+      // console.log(response.data.message);
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.response.data.error);
+    }
+  };
+
   return (
     <div className="flex bg-[#669bbc] min-h-screen justify-center items-center">
       <div className="bg-white p-8 rounded-md shadow-lg shadow-black">
@@ -50,7 +68,12 @@ const SignUp = () => {
             onChange={(e) => setUser({ ...user, password: e.target.value })}
           />
         </div>
-        <button className={`${disable ? "bg-[#e3e3e3] cursor-not-allowed": "bg-[#ff6984]"} w-full py-1 my-2 rounded-md text-white`}>
+        <button
+          onClick={handleSubmit}
+          className={`${
+            disable ? "bg-[#e3e3e3] cursor-not-allowed" : "bg-[#ff6984]"
+          } w-full py-1 my-2 rounded-md text-white`}
+        >
           Signup
         </button>
         <p className="mt-4">
